@@ -17,7 +17,7 @@ target_link_libraries(Example_BasicObservers CppReact)
 ### Example_BasicReactors
 find_package(Boost 1.55 COMPONENTS coroutine context system)
 if(Boost_FOUND)
-	include_directories(${Boost_INCLUDE_DIRS}) 
+	include_directories(${Boost_INCLUDE_DIRS})
 	add_executable(Example_BasicReactors src/BasicReactors.cpp)
 	target_link_libraries(Example_BasicReactors CppReact ${Boost_LIBRARIES})
 else()
@@ -37,3 +37,11 @@ target_link_libraries(Example_BasicSynchronization CppReact)
 ### Example_Sandbox
 add_executable(Example_Sandbox src/Main.cpp)
 target_link_libraries(Example_Sandbox CppReact)
+
+### Example SFML
+find_package(SFML 2 REQUIRED system window graphics network audio)
+if(SFML_FOUND)
+  include_directories(${SFML_INCLUDE_DIR})
+  add_executable(Example_SFML src/Sfml.cpp)
+  target_link_libraries(Example_SFML ${SFML_LIBRARIES} CppReact)
+endif()
