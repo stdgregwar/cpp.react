@@ -37,7 +37,14 @@ namespace pong {
 
     constexpr int winWidth = 480;
     constexpr int winHeight = 272;
+    constexpr float bounce = -1.05f;
+    const vec2 barsSize{5,40};
+    constexpr float speedFac = 500;
+    constexpr float ballRadius = 5;
+    const vec2 ballStartSpeed{130,130};
+
     using KeyMap = unordered_map<SDLKey,vec2>;
+
     template<class K, class V>
     auto getOrElse(const unordered_map<K,V>& m,const K& key, const V& def) -> const V& {
         auto it = m.find(key);
@@ -58,7 +65,6 @@ namespace pong {
         }
     };
 
-    constexpr float bounce = -1.05f;
 
     auto foldBallState(float dt, MovableState prev, const rect& lbar, const rect& rbar) -> MovableState {
         if(prev.pos.y > winHeight || prev.pos.y < 0) {
@@ -81,7 +87,6 @@ namespace pong {
         return getOrElse(m,e.key.keysym.sym,{0,0})*val;
     }
 
-    constexpr float speedFac = 500;
 
     auto dirToSpeed(const vec2& dir, vec2 speed) -> vec2 {
         return speed += dir*speedFac;
@@ -92,7 +97,6 @@ namespace pong {
         return newPos;
     }
 
-    const vec2 barsSize{5,40};
 
     auto posToRect(const vec2& size, const vec2& pos) -> rect {
         return rect{pos,size};
@@ -130,13 +134,13 @@ namespace pong {
 
     SignalT<MovableState> ballState = Iterate(
                                               frameEvent,
-                                              MovableState{{winWidth/2,winHeight/2},{130,130}},
+                                              MovableState{{winWidth/2,winHeight/2},ballStartSpeed},
                                               With(lbarRect,rbarRect),
                                               foldBallState
                                               );
 
     SignalT<rect> ballRect = MakeSignal(MakeSignal(ballState,[](const MovableState& s)->vec2{return s.pos;}),
-                                        bind(posToRect,vec2{5,5},_1));
+                                        bind(posToRect,vec2{ballRadius,ballRadius},_1));
 
     void run() {
         //Close window on sysevent close
